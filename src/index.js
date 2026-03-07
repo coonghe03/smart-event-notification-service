@@ -2,7 +2,7 @@
 import express from "express";
 import dotenv from "dotenv";
 import connectDB from "./config/db.js";
-import notificationRoutes from "./routes/notificationRoutes.js";
+// import notificationRoutes from "./routes/notificationRoutes.js";
 
 dotenv.config();
 
@@ -11,8 +11,8 @@ const PORT = process.env.PORT || 3004;
 
 app.use(express.json());
 
-// Routes
-app.use("/api/notifications", notificationRoutes);
+// // Routes
+// app.use("/api/notifications", notificationRoutes);
 
 // Health check
 app.get("/health", (req, res) => {
