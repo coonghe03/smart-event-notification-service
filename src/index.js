@@ -19,9 +19,18 @@ app.get("/health", (req, res) => {
   res.status(200).json({ status: "ok", service: "notification-service" });
 });
 
-// Connect to DB and start server
-connectDB().then(() => {
-  app.listen(PORT, () => {
-    console.log(`Notification Service running on port ${PORT}`);
-  });
-});
+async function startServer() {
+  try {
+    await connectDB();
+    console.log("Database connected");
+
+    app.listen(PORT, "0.0.0.0", () => {
+      console.log(`Notification Service running on port ${PORT}`);
+    });
+  } catch (error) {
+    console.error("Failed to start service:", error);
+    process.exit(1);
+  }
+}
+
+startServer();
