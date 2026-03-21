@@ -16,7 +16,7 @@ app.use(express.json());
 
 // Health check
 app.get("/health", (req, res) => {
-  res.status(200).json({ status: "ok", service: "notification-service" });
+  res.status(200).json({ status: "ok", service: "notification" });
 });
 
 async function startServer() {
