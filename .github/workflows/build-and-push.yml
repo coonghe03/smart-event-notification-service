@@ -56,7 +56,7 @@ jobs:
           docker images --digests $ECR_REGISTRY/$ECR_REPOSITORY
 
       - name: SonarCloud Scan
-        uses: SonarSource/sonarcloud-github-action@master
+        uses: SonarSource/sonarqube-scan-action@v7
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}  # auto-provided by GitHub
           SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
