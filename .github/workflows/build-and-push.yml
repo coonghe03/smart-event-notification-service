@@ -54,3 +54,9 @@ jobs:
         run: |
           echo "Pushed image digest:"
           docker images --digests $ECR_REGISTRY/$ECR_REPOSITORY
+
+      - name: SonarCloud Scan
+        uses: SonarSource/sonarcloud-github-action@master
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}  # auto-provided by GitHub
+          SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
