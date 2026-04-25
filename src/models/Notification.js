@@ -3,11 +3,6 @@ import mongoose from "mongoose";
 
 const notificationSchema = mongoose.Schema(
   {
-    userId: {
-      type: mongoose.Schema.Types.ObjectId,
-      required: true,
-      ref: "User", // just reference – we don't populate here
-    },
     type: {
       type: String,
       enum: ["booking_confirmation", "event_reminder"],

@@ -22,6 +22,7 @@ const sendBookingConfirmation = async (req, res) => {
     userEmail,
   } = req.body;
 
+  console.log("Received booking confirmation request:", req.body);
   // If email not provided → fetch from User Service
   if (!userEmail) {
     try {
@@ -72,6 +73,8 @@ const sendBookingConfirmation = async (req, res) => {
       html,
     });
 
+    console.log("Email sent successfully:", data);
+    console.log("Error", error)
     if (error) {
       // ... (keep existing error logging)
       await new Notification({
@@ -81,7 +84,6 @@ const sendBookingConfirmation = async (req, res) => {
     }
 
     const notification = await new Notification({
-      userId,
       type: "booking_confirmation",
       eventId,
       subject: `Booking Confirmed – ${eventTitle}`,
@@ -91,6 +93,8 @@ const sendBookingConfirmation = async (req, res) => {
       messageId: data?.id,
     }).save();
 
+    console.log("Notification saved:", notification);
+    console.log("Response", res.data)
     res.status(200).json({
       success: true,
       message: "Confirmation email sent",
@@ -104,7 +108,7 @@ const sendBookingConfirmation = async (req, res) => {
 };
 
 const sendEventReminder = async (req, res) => {
-  let { userId, eventId, eventTitle, eventDate, userEmail } = req.body;
+  let { eventId, eventTitle, eventDate, userEmail } = req.body;
 
   // Fetch email if missing
   if (!userEmail) {
@@ -172,7 +176,7 @@ const sendEventReminder = async (req, res) => {
 
 const getMyNotifications = async (req, res) => {
   try {
-    const notifications = await Notification.find({ userId: req.user.id })
+    const notifications = await Notification.find({ to: req.user.email })
       .sort({ createdAt: -1 })
       .limit(20);
 

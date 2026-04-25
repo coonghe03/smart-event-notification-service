@@ -5,9 +5,9 @@ import dotenv from "dotenv";
 dotenv.config();
 
 const USER_SERVICE_URL =
-  process.env.USER_SERVICE_URL || "http://localhost:3001";
+  process.env.USER_SERVICE_URL || "http://127.0.0.1:3006";
 const EVENT_SERVICE_URL =
-  process.env.EVENT_SERVICE_URL || "http://localhost:3002";
+  process.env.EVENT_SERVICE_URL || "http://127.0.0.1:3006";
 
 // Internal JWT – same secret as User Service uses to sign tokens
 // In production: better to use service-to-service auth (API keys, mutual TLS, or IAM), but JWT is acceptable for uni project
