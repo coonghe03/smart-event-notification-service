@@ -12,6 +12,9 @@ const PORT = process.env.PORT || 3004;
 
 app.use(express.json());
 
+// After app = express()
+app.use('/api/notifications', limiter);   // or app.use(limiter) for all
+
 // Routes
 app.use("/api/notifications", notificationRoutes);
 app.use("/api-docs", swaggerUi.serve, swaggerUi.setup(swaggerSpec));

@@ -30,7 +30,7 @@ const options = {
       },
     ],
   },
-  apis: ["./src/routes/*.js"], // read route files
+  apis: ["./src/routes/**/*.js"], // read route files
 };
 
 const swaggerSpec = swaggerJsdoc(options);
