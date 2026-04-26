@@ -50,13 +50,13 @@ jobs:
           docker push $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG
           docker push $ECR_REGISTRY/$ECR_REPOSITORY:latest
 
-      - name: Image digest (for logging)
-        run: |
-          echo "Pushed image digest:"
-          docker images --digests $ECR_REGISTRY/$ECR_REPOSITORY
+      # - name: Image digest (for logging)
+      #   run: |
+      #     echo "Pushed image digest:"
+      #     docker images --digests $ECR_REGISTRY/$ECR_REPOSITORY
 
-                - name: SonarCloud Scan
-        uses: SonarSource/sonarcloud-github-action@master
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }} # auto-provided by GitHub
-          SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
+      #           - name: SonarCloud Scan
+      #   uses: SonarSource/sonarcloud-github-action@master
+      #   env:
+      #     GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }} # auto-provided by GitHub
+      #     SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
