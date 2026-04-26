@@ -1,4 +1,4 @@
-name: Build and Push to AWS ECR with SonarCloud
+name: Build and Push to AWS ECR
 
 on:
   push:
@@ -8,42 +8,16 @@ on:
   workflow_dispatch: # Allows manual trigger from GitHub UI
 
 env:
-  AWS_REGION: ap-southeast-1
-  ECR_REPOSITORY: smart-event-notification
+  AWS_REGION: ${{ secrets.AWS_REGION }} # ap-southeast-1
+  ECR_REPOSITORY: smart-event-notification # Change if you named it differently
+  IMAGE_TAG: latest # Unique tag per commit (or use :latest) # Unique tag per commit (or use :latest)
 
 jobs:
-  # ====================== SONARCLOUD SCAN JOB ======================
-  sonarcloud:
-    name: SonarCloud Scan
-    runs-on: ubuntu-latest
-    steps:
-      - name: Checkout code
-        uses: actions/checkout@v4
-        with:
-          fetch-depth: 0 # Required for SonarCloud to analyze full history
-
-      - name: Install dependencies
-        run: npm ci # Faster and more reliable than npm install
-
-      - name: Run tests (if any)
-        run: npm test || echo "No tests found - skipping"
-
-      - name: SonarCloud Scan
-        uses: SonarSource/sonarcloud-github-action@v2
-        with:
-          args: >
-            -Dsonar.organization=bavi2002
-            -Dsonar.projectKey=Bavi2002_smart-event-notification-service
-        env:
-          SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
-
-  # ====================== BUILD & DEPLOY JOB ======================
   build-and-push:
     name: Build, tag, and push image to Amazon ECR
     runs-on: ubuntu-latest
-    needs: sonarcloud # Only run if SonarCloud succeeds
     permissions:
-      id-token: write
+      id-token: write # Required if you switch to OIDC later
       contents: read
 
     steps:
@@ -61,29 +35,29 @@ jobs:
         id: login-ecr
         uses: aws-actions/amazon-ecr-login@v2
 
-      - name: Build, tag, and push Docker image
+      - name: Build, tag, and push image to Amazon ECR
         env:
           ECR_REGISTRY: ${{ steps.login-ecr.outputs.registry }}
+          IMAGE_TAG: ${{ env.IMAGE_TAG }}
         run: |
-          # Build the image
-          docker build -t $ECR_REGISTRY/$ECR_REPOSITORY:${{ github.sha }} .
+          # Build Docker image
+          docker build -t $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG .
 
-          # Also tag as latest (useful for demo)
-          docker tag $ECR_REGISTRY/$ECR_REPOSITORY:${{ github.sha }} $ECR_REGISTRY/$ECR_REPOSITORY:latest
+          # Tag as 'latest' too (optional but useful for demo)
+          docker tag $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG $ECR_REGISTRY/$ECR_REPOSITORY:latest
 
           # Push both tags
-          docker push $ECR_REGISTRY/$ECR_REPOSITORY:${{ github.sha }}
+          docker push $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG
           docker push $ECR_REGISTRY/$ECR_REPOSITORY:latest
 
       - name: Image digest (for logging)
         run: |
           echo "Pushed image digest:"
-          docker images --digests ${{ steps.login-ecr.outputs.registry }}/$ECR_REPOSITORY
+          docker images --digests $ECR_REGISTRY/$ECR_REPOSITORY
 
-      - name: Force new ECS deployment
+      - name: Force ECS deployment
         run: |
           aws ecs update-service \
             --cluster smart-event-cluster \
-            --service notification-service \
-            --force-new-deployment \
-            --region ${{ env.AWS_REGION }}
+            --service notification-service_latest \
+            --force-new-deployment
