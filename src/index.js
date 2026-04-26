@@ -3,6 +3,8 @@ import express from "express";
 import dotenv from "dotenv";
 import connectDB from "./config/db.js";
 import notificationRoutes from "./routes/notificationRoutes.js";
+import swaggerUi from "swagger-ui-express";
+import swaggerSpec from "./config/swagger.js";
 
 dotenv.config();
 
@@ -13,6 +15,8 @@ app.use(express.json());
 
 // // Routes
 app.use("/api/notifications", notificationRoutes);
+
+app.use("/api-docs", swaggerUi.serve, swaggerUi.setup(swaggerSpec));
 
 // Health check
 app.get("/health", (req, res) => {
