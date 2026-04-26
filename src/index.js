@@ -34,3 +34,4 @@ async function startServer() {
 }
 
 startServer();
+// Export app for testing
