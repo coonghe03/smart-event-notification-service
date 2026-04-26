@@ -54,3 +54,10 @@ jobs:
         run: |
           echo "Pushed image digest:"
           docker images --digests $ECR_REGISTRY/$ECR_REPOSITORY
+
+      - name: Force ECS deployment
+        run: |
+          aws ecs update-service \
+            --cluster smart-event-cluster \
+            --service smart-event-registration-task-service-4b4yv8rr \
+            --force-new-deployment
